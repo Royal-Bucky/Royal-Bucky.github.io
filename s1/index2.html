@@ -48,7 +48,7 @@
 			const otp = document.getElementById("otp").value;
 			const email = localStorage.getItem("login_email");
 			const role = localStorage.getItem("login_role");
-			const res = await fetch("http://localhost:4000/api/auth/verify-otp", {
+			const res = await fetch("https://royal-bucky-github-io.onrender.com/api/auth/verify-otp", {
 				method: "POST",
 				headers: { "Content-Type": "application/json"},
 				body: JSON.stringify({email,otp})
