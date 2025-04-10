@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OTP Verfication</title>
+	<style>
+		body {
+			font-family: Arial,sans-serif;
+			background-color: #eef2f3;
+			text-align: center;
+			padding-top: 100px;
+		}
+		.container {
+			background-color: #ffffff;
+			width: 350px;
+			margin: auto;
+			padding: 20px;
+			border: 1px solid #ccc;
+			border-radius: 8px;
+		}
+		h2 {
+			margin-bottom: 20px;
+		}
+		input[type="text"],input[text="submit"] {
+			width: 90%;
+			padding: 10px;
+			margin: 10px 0;
+			box-sizing: border-box;
+		}
+		button {
+			background-color: #28a745;
+			color: white;
+			border: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h2>Enter OTP</h2>
+		<p>We have sent an OTP to your registered email!</p>
+		<form>
+			<label for="otp">Enter OTP</label>
+			<input type="text" id="otp" name="otp" minlength="6" maxlength="6" required><br>
+			<button onclick="verifyOTP()">Verify</button>
+		</form>
+	</div>
+	<script>
+		async function verifyOTP() {
+			const otp = document.getElementById("otp").value;
+			const email = localStorage.getItem("login_email");
+			const role = localStorage.getItem("login_role");
+			const res = await fetch("http://localhost:4000/api/auth/verify-otp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json"},
+				body: JSON.stringify({email,otp})
+			});
+			const data = await res.json();
+			if(data.success) {
+				if(role === "student") {
+					window.location.href="../student/dashboard.html";
+				} else if (role === "admin") {
+					window.location.href="../admin/dashboard.html";
+				}
+			} else {
+				alert(data.error || "OTP verification failed");
+			}
+		}
+	</script>
+</body>
+</html>
