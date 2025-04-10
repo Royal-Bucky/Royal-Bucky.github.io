@@ -8,8 +8,8 @@ const otpStorage = {};
 const transporter = nodemailer.createTransport({
 	service: 'gmail',
 	auth: {
-		user: 'royalbuckyrb2@gmail.com',
-		pass: 'tlxdfkndnnmdouvs'
+		user: process.env.EMAIL_USER,
+		pass: process.env.EMAIL_PASS
 	}
 });
 
@@ -37,7 +37,7 @@ router.post('/login', (req,res) => {
 		otpStorage[user.email] = {otp,role};
 		//Send OTP to mail
 		const mailOptions = {
-			from: 'royalbuckyrb2@gmail.com',
+			from: process.env.EMAIL_USER,
 			to: user.email,
 			subject: 'Login OTP Verification',
 			text: `Your OTP is: ${otp}`
