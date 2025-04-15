@@ -132,7 +132,7 @@
 				return;
 			}
 
-			const res = await fetch(`http://localhost:4000/api/student/details?email=${encodeURIComponent(email)}`);
+			const res = await fetch(`https://gameocoder.onrender.com/api/student/details?email=${encodeURIComponent(email)}`);
 			const data = await res.json();
 
 			if(data.error) {

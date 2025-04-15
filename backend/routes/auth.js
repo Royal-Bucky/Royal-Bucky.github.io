@@ -29,13 +29,10 @@ router.post('/login', (req,res) => {
 		if (err) return res.status(500).json({error: 'Database Error'});
 		if (!user) return res.status(401).json({error: 'User Not Found'});
 
-		//Validate
 		const match = await bcrypt.compare(password, user.password_hash);
 		if (!match) return res.status(401).json({error: 'Invalid password'});
-		//Generate OTP
 		const otp = Math.floor(100000 + Math.random() * 900000).toString();
 		otpStorage[user.email] = {otp,role};
-		//Send OTP to mail
 		const mailOptions = {
 			from: 'royalbuckyrb2@gmail.com',
 			to: user.email,

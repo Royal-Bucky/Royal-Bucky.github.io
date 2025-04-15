@@ -3,7 +3,6 @@ const bcrypt = require('bcrypt');
 const router = express.Router();
 const db = require('../db');
 
-//add
 router.post('/add-student', async (req,res) => {
     const { name, roll_no, email, branch, year, password } = req.body;
     const query = "INSERT INTO students (name, roll_no, email, branch, year, password_hash) VALUES (?, ?, ?, ?, ?, ?);";

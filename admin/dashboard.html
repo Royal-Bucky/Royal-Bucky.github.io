@@ -415,7 +415,7 @@
     // Load and display students
     async function loadStudents() {
       try {
-        const response = await fetch('http://localhost:4000/api/admin/get-students');
+        const response = await fetch('https://gameocoder.onrender.com/api/admin/get-students');
         students = await response.json();
         renderTable(students);
       } catch (error) {
@@ -490,8 +490,8 @@
 
       try {
         const url = isEdit
-          ? 'http://localhost:4000/api/admin/edit-student'
-          : 'http://localhost:4000/api/admin/add-student';
+          ? 'https://gameocoder.onrender.com/api/admin/edit-student'
+          : 'https://gameocoder.onrender.com/api/admin/add-student';
         const method = isEdit ? 'PUT' : 'POST';
         const body = isEdit
           ? { roll_no, name, email, branch, year }
@@ -521,7 +521,7 @@
     // Delete student
     async function deleteStudent(roll_no) {
       try {
-        const response = await fetch('http://localhost:4000/api/admin/delete-student', {
+        const response = await fetch('https://gameocoder.onrender.com/api/admin/delete-student', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
