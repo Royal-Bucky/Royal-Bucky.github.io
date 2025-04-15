@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Student Dashboard</title>
+	<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+	<style>
+		* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+		}
+
+		body {
+		font-family: 'Rubik', sans-serif;
+		background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+		min-height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+		}
+
+		/* Subtle background pattern */
+		body::before {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background: url('data:image/svg+xml,%3Csvg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="%23ffffff" fill-opacity="0.1" fill-rule="evenodd"%3E%3Cpath d="M0 40L40 0H20L0 20z"/%3E%3C/g%3E%3C/svg%3E');
+		z-index: 0;
+		}
+
+		.container {
+		background: rgba(255, 255, 255, 0.95);
+		width: 450px;
+		padding: 40px;
+		border-radius: 15px;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+		position: relative;
+		z-index: 1;
+		animation: fadeIn 1s ease-in-out;
+		}
+
+		/* Animation for container */
+		@keyframes fadeIn {
+		from { opacity: 0; transform: translateY(-20px); }
+		to { opacity: 1; transform: translateY(0); }
+		}
+
+		h2 {
+		color: #1e3c72;
+		font-size: 24px;
+		margin-bottom: 30px;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+		}
+
+		.info {
+		text-align: left;
+		margin: 15px 0;
+		font-size: 16px;
+		color: #333;
+		display: flex;
+		justify-content: space-between;
+		padding: 10px;
+		border-left: 4px solid #2a5298;
+		background: #f9f9f9;
+		border-radius: 4px;
+		transition: transform 0.2s;
+		}
+
+		.info:hover {
+		transform: translateX(5px);
+		}
+
+		.info span {
+		font-weight: 700;
+		color: #1e3c72;
+		}
+
+		.logout-btn {
+		display: inline-block;
+		width: 100%;
+		padding: 12px;
+		background: linear-gradient(90deg, #dc3545, #a71d2a); /* Adapted red to fit theme */
+		color: white;
+		text-decoration: none;
+		border-radius: 8px;
+		font-size: 16px;
+		font-weight: 700;
+		margin-top: 30px;
+		text-align: center;
+		transition: transform 0.2s, box-shadow 0.3s;
+		}
+
+		.logout-btn:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+		}
+
+		/* Responsive design */
+		@media (max-width: 480px) {
+		.container {
+			width: 90%;
+			padding: 20px;
+		}
+		h2 {
+			font-size: 20px;
+		}
+		.info {
+			font-size: 14px;
+			padding: 8px;
+		}
+		.logout-btn {
+			font-size: 14px;
+			padding: 10px;
+		}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h2>Welcome, Student</h2>
+
+		<p>Name: <span id="name"></span></p>
+		<p>Roll No: <span id="roll_no"></span></p>
+		<p>Mobile: <span id="mobile"></span></p>
+		<p>Email: <span id="email"></span></p>
+		<p>Branch: <span id="branch"></span></p>
+		<p>Year: <span id="year"></span></p>
+		<a class="logout-btn" href="../index.html">Logout</a>
+	</div>
+
+	<script>
+		window.onload = async () => {
+			const email = localStorage.getItem("studentEmail");
+			if(!email) {
+				alert("No email found! Please try again");
+				window.location.href = '/';
+				return;
+			}
+
+			const res = await fetch(`http://localhost:4000/api/student/details?email=${encodeURIComponent(email)}`);
+			const data = await res.json();
+
+			if(data.error) {
+				document.body.innerHTML = `<p>Error: ${data.error}</p>`;
+			} else {
+				document.getElementById("name").innerText = data.name;
+				document.getElementById("roll_no").innerText = data.roll_no;
+				document.getElementById("mobile").innerText = data.mobile;
+				document.getElementById("email").innerText = data.email;
+				document.getElementById("branch").innerText = data.branch;
+				document.getElementById("year").innerText = data.year;
+			}
+		};
+	</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+Student Databse has currently:
+students table-
+{
+	"Rohan Kumar",
+	"21CSE034",
+	"amaliemolvikofficial@gmail.com"
+	password123 ka bcrypt hash
+}
+
+admin table-
+{
+	"admin1",
+	"amaliemolvikofficial@gmail.com",
+	"password123"
+}
+
+change backend/routes/auth.js, line number 11-12 to your specific userid and passwords
+				line number 40 to your specific userid
+
+to run backend, do "node backend/index.js"
+now open index.html
+
+
+localstorage ->
+otp, email->"studentEmail"

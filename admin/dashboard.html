@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rubik', sans-serif;
+      background: url('https://scontent.fpat11-1.fna.fbcdn.net/v/t39.30808-6/474102161_1088036903022234_5535109724639717569_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=110&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=PE2l3FxuByMQ7kNvwH-outU&_nc_oc=AdkacZJ2hlHkCLQwQ2YCK_Y9qoz2aeNdaKsftSHTRLD0PcUhQdtuQ2tSJbvkcUHhgkILQ62iE_9xZ8Jx7mqwpGap&_nc_zt=23&_nc_ht=scontent.fpat11-1.fna&_nc_gid=A3zlq6GVyqecSkbXxkIOfg&oh=00_AfGxCsoYmH2VCzlLEHDQUwuoyOOflDI7Ajg0W4Nb_w5h1w&oe=68046316') no-repeat center center fixed;
+		  background-size: cover;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      width: 900px;
+      max-width: 95%;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      color: #1e3c72;
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    input[type="text"].search {
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      width: 200px;
+      transition: border-color 0.3s;
+    }
+
+    input[type="text"].search:focus {
+      border-color: #2a5298;
+      outline: none;
+    }
+
+    button {
+      padding: 12px;
+      background: linear-gradient(90deg, #2a5298, #1e3c72);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.3s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(42, 82, 152, 0.4);
+    }
+
+    button.edit, button.delete {
+      padding: 8px;
+      font-size: 14px;
+      min-width: 80px;
+    }
+
+    button.delete {
+      background: linear-gradient(90deg, #dc3545, #a71d2a);
+    }
+
+    button.delete:hover {
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+    }
+
+    th {
+      background: #1e3c72;
+      color: white;
+    }
+
+    tr:hover {
+      background: #e0e7ff;
+    }
+
+    .no-students {
+      color: #333;
+      text-align: center;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      width: 400px;
+      max-width: 90%;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: slideIn 0.3s ease-in-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .modal-content h3 {
+      color: #1e3c72;
+      font-size: 18px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .modal-content form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-content label {
+      color: #333;
+      font-size: 14px;
+      margin: 10px 0 5px;
+      font-weight: 700;
+    }
+
+    .modal-content input {
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .modal-content input:focus {
+      border-color: #2a5298;
+      box-shadow: 0 0 8px rgba(42, 82, 152, 0.5);
+      outline: none;
+    }
+
+    .modal-content input.valid {
+      border-color: #28a745;
+    }
+
+    .modal-content input.invalid {
+      border-color: #dc3545;
+    }
+
+    .modal-content .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .modal-content button {
+      flex: 1;
+    }
+
+    .modal-content button.cancel {
+      background: linear-gradient(90deg, #6c757d, #5a6268);
+    }
+
+    .modal-content button.cancel:hover {
+      box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background: #333;
+      color: white;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s, transform 0.3s;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success {
+      background: linear-gradient(90deg, #28a745, #1f7a38);
+    }
+
+    .toast.error {
+      background: linear-gradient(90deg, #dc3545, #a71d2a);
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 20px;
+      }
+      h2 {
+        font-size: 24px;
+      }
+      input[type="text"].search {
+        width: 150px;
+        font-size: 14px;
+      }
+      button {
+        font-size: 14px;
+      }
+      table {
+        font-size: 12px;
+      }
+      .modal-content {
+        width: 90%;
+        padding: 15px;
+      }
+      .modal-content h3 {
+        font-size: 16px;
+      }
+      .modal-content input, .modal-content button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Admin Dashboard</h2>
+    <div class="controls">
+      <div class="search-box">
+        <label for="searchInput" style="color: #1e3c72;">Search:</label>
+        <input type="text" id="searchInput" class="search" placeholder="Name or Roll No">
+      </div>
+      <button onclick="openModal('add')">Add Student</button>
+    </div>
+    <div id="studentsList"></div>
+  </div>
+
+  <div id="studentModal" class="modal">
+    <div class="modal-content">
+      <h3 id="modalTitle">Add Student</h3>
+      <form id="studentForm">
+        <label for="modalName">Name:</label>
+        <input type="text" id="modalName" required>
+        <label for="modalRollNo">Roll No:</label>
+        <input type="text" id="modalRollNo" required>
+        <label for="modalEmail">Email:</label>
+        <input type="email" id="modalEmail" required>
+        <label for="modalBranch">Branch:</label>
+        <input type="text" id="modalBranch" required>
+        <label for="modalYear">Year:</label>
+        <input type="text" id="modalYear" required>
+        <label for="modalPass" id="modalPassLabel">Password:</label>
+        <input type="password" id="modalPass">
+        <div class="button-group">
+          <button type="submit">Save</button>
+          <button type="button" class="cancel" onclick="closeModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let students = [];
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add('show'), 100);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // Modal handling
+    function openModal(mode, student = null) {
+      const modal = document.getElementById('studentModal');
+      const form = document.getElementById('studentForm');
+      const title = document.getElementById('modalTitle');
+      const rollNoInput = document.getElementById('modalRollNo');
+      const passInput = document.getElementById('modalPass');
+      const passLabel = document.getElementById('modalPassLabel');
+
+      form.reset();
+      form.querySelectorAll('input').forEach(input => {
+        input.classList.remove('valid', 'invalid');
+      });
+
+      if (mode === 'add') {
+        title.textContent = 'Add Student';
+        rollNoInput.disabled = false;
+        passInput.required = true;
+        passLabel.style.display = 'block';
+        passInput.style.display = 'block';
+      } else {
+        title.textContent = 'Edit Student';
+        rollNoInput.disabled = true;
+        passInput.required = false;
+        passLabel.style.display = 'none';
+        passInput.style.display = 'none';
+        document.getElementById('modalName').value = student.name;
+        document.getElementById('modalRollNo').value = student.roll_no;
+        document.getElementById('modalEmail').value = student.email;
+        document.getElementById('modalBranch').value = student.branch;
+        document.getElementById('modalYear').value = student.year;
+      }
+
+      modal.classList.add('active');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('studentModal');
+      modal.classList.remove('active');
+    }
+
+    // Input validation
+    function validateInput(input, condition) {
+      input.addEventListener('input', () => {
+        if (condition(input.value)) {
+          input.classList.remove('invalid');
+          input.classList.add('valid');
+        } else {
+          input.classList.remove('valid');
+          input.classList.add('invalid');
+        }
+      });
+    }
+
+    const modalName = document.getElementById('modalName');
+    const modalRollNo = document.getElementById('modalRollNo');
+    const modalEmail = document.getElementById('modalEmail');
+    const modalBranch = document.getElementById('modalBranch');
+    const modalYear = document.getElementById('modalYear');
+    const modalPass = document.getElementById('modalPass');
+
+    validateInput(modalName, val => val.trim().length >= 2);
+    validateInput(modalRollNo, val => /^[a-zA-Z0-9]{6,}$/.test(val));
+    validateInput(modalEmail, val => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val));
+    validateInput(modalBranch, val => val.trim().length >= 2);
+    validateInput(modalYear, val => /^[1-4]$/.test(val));
+    validateInput(modalPass, val => !val || val.length >= 8);
+
+    // Load and display students
+    async function loadStudents() {
+      try {
+        const response = await fetch('http://localhost:4000/api/admin/get-students');
+        students = await response.json();
+        renderTable(students);
+      } catch (error) {
+        showToast('Error fetching students', 'error');
+      }
+    }
+
+    function renderTable(data) {
+      const studentsListDiv = document.getElementById('studentsList');
+      studentsListDiv.innerHTML = '';
+
+      if (data.length === 0) {
+        studentsListDiv.innerHTML = '<p class="no-students">No students found.</p>';
+        return;
+      }
+
+      const table = document.createElement('table');
+      table.innerHTML = `
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Roll No</th>
+            <th>Email</th>
+            <th>Branch</th>
+            <th>Year</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      `;
+      const tbody = table.querySelector('tbody');
+
+      data.forEach(student => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${student.name}</td>
+          <td>${student.roll_no}</td>
+          <td>${student.email}</td>
+          <td>${student.branch}</td>
+          <td>${student.year}</td>
+          <td>
+            <button class="edit" onclick='openModal("edit", ${JSON.stringify(student)})'>Edit</button>
+            <button class="delete" onclick="deleteStudent('${student.roll_no}')">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+
+      studentsListDiv.appendChild(table);
+    }
+
+    // Search filter
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      const filtered = students.filter(student =>
+        student.name.toLowerCase().includes(query) ||
+        student.roll_no.toLowerCase().includes(query)
+      );
+      renderTable(filtered);
+    });
+
+    // Form submission
+    document.getElementById('studentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = modalName.value;
+      const roll_no = modalRollNo.value;
+      const email = modalEmail.value;
+      const branch = modalBranch.value;
+      const year = modalYear.value;
+      const password = modalPass.value;
+      const isEdit = modalRollNo.disabled;
+
+      try {
+        const url = isEdit
+          ? 'http://localhost:4000/api/admin/edit-student'
+          : 'http://localhost:4000/api/admin/add-student';
+        const method = isEdit ? 'PUT' : 'POST';
+        const body = isEdit
+          ? { roll_no, name, email, branch, year }
+          : { name, roll_no, email, branch, year, password };
+
+        const response = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          showToast(isEdit ? 'Student updated successfully' : 'Student added successfully');
+          closeModal();
+          loadStudents();
+        } else {
+          showToast(isEdit ? 'Failed to update student' : 'Failed to add student', 'error');
+        }
+      } catch (error) {
+        showToast('Error connecting to server', 'error');
+      }
+    });
+
+    // Delete student
+    async function deleteStudent(roll_no) {
+      try {
+        const response = await fetch('http://localhost:4000/api/admin/delete-student', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ roll_no })
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          showToast('Student deleted successfully');
+          loadStudents();
+        } else {
+          showToast('Failed to delete student', 'error');
+        }
+      } catch (error) {
+        showToast('Error connecting to server', 'error');
+      }
+    }
+
+    // Load students on page load
+    loadStudents();
+  </script>
+</body>
+</html>

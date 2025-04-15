@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>OTP Verfication</title>
+	<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+	<style>
+		* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+		}
+
+		body {
+		font-family: 'Rubik', sans-serif;
+		/* background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); */
+		background: url('https://scontent.fpat11-1.fna.fbcdn.net/v/t39.30808-6/474102161_1088036903022234_5535109724639717569_n.jpg?stp=dst-jpg_s960x960_tt6&_nc_cat=110&ccb=1-7&_nc_sid=cc71e4&_nc_ohc=PE2l3FxuByMQ7kNvwH-outU&_nc_oc=AdkacZJ2hlHkCLQwQ2YCK_Y9qoz2aeNdaKsftSHTRLD0PcUhQdtuQ2tSJbvkcUHhgkILQ62iE_9xZ8Jx7mqwpGap&_nc_zt=23&_nc_ht=scontent.fpat11-1.fna&_nc_gid=A3zlq6GVyqecSkbXxkIOfg&oh=00_AfGxCsoYmH2VCzlLEHDQUwuoyOOflDI7Ajg0W4Nb_w5h1w&oe=68046316') no-repeat center center fixed;
+		background-size: cover;
+		
+		min-height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		overflow: hidden;
+		}
+
+		.container {
+		background: rgba(255, 255, 255, 0.95);
+		width: 400px;
+		padding: 40px;
+		border-radius: 15px;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+		position: relative;
+		z-index: 1;
+		animation: fadeIn 1s ease-in-out;
+		}
+
+		/* Animation for container */
+		@keyframes fadeIn {
+		from { opacity: 0; transform: translateY(-20px); }
+		to { opacity: 1; transform: translateY(0); }
+		}
+
+		h2 {
+		color: #1e3c72;
+		font-size: 24px;
+		margin-bottom: 20px;
+		text-transform: uppercase;
+		letter-spacing: 2px;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+		}
+
+		p {
+		color: #333;
+		font-size: 16px;
+		margin-bottom: 20px;
+		font-weight: 400;
+		}
+
+		label {
+		display: block;
+		text-align: left;
+		color: #333;
+		font-size: 14px;
+		margin: 10px 0 5px;
+		font-weight: 700;
+		}
+
+		input[type="text"] {
+		width: 100%;
+		padding: 12px;
+		margin-bottom: 15px;
+		border: 2px solid #ccc;
+		border-radius: 8px;
+		font-size: 16px;
+		transition: border-color 0.3s, box-shadow 0.3s;
+		background: #f9f9f9;
+		}
+
+		input[type="text"]:focus {
+		border-color: #2a5298;
+		box-shadow: 0 0 8px rgba(42, 82, 152, 0.5);
+		outline: none;
+		background: #fff;
+		}
+
+		button {
+		width: 100%;
+		padding: 12px;
+		background: linear-gradient(90deg, #28a745, #1f7a38); /* Adapted green to fit theme */
+		color: white;
+		border: none;
+		border-radius: 8px;
+		font-size: 16px;
+		font-weight: 700;
+		cursor: pointer;
+		transition: transform 0.2s, box-shadow 0.3s;
+		font-family: 'Orbitron', sans-serif;
+		}
+
+		button:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+		}
+
+		/* Responsive design */
+		@media (max-width: 480px) {
+		.container {
+			width: 90%;
+			padding: 20px;
+		}
+		h2 {
+			font-size: 20px;
+		}
+		p {
+			font-size: 14px;
+		}
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h2>Enter OTP</h2>
+		<p>We have sent an OTP to your registered email!</p>
+		<form>
+			<label for="otp">Enter OTP</label>
+			<input type="text" id="otp" name="otp" minlength="6" maxlength="6" required><br>
+			<button onclick="verifyOTP()">Verify</button>
+		</form>
+	</div>
+	<script>
+		async function verifyOTP() {
+			const otp = document.getElementById("otp").value;
+			const email = localStorage.getItem("login_email");
+			const role = localStorage.getItem("login_role");
+			const res = await fetch("http://localhost:4000/api/auth/verify-otp", {
+				method: "POST",
+				headers: { "Content-Type": "application/json"},
+				body: JSON.stringify({email,otp})
+			});
+			const data = await res.json();
+			if(data.success) {
+				if(role === "student") {
+					localStorage.setItem("studentEmail", email);
+					window.location.href="../student/dashboard.html";
+				} else if (role === "admin") {
+					window.location.href="../admin/dashboard.html";
+				}
+			} else {
+				alert(data.error || "OTP verification failed");
+			}
+		}
+	</script>
+</body>
+</html>
