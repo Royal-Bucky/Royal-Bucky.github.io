@@ -121,32 +121,56 @@
 	<div class="container">
 		<h2>Enter OTP</h2>
 		<p>We have sent an OTP to your registered email!</p>
-		<form>
+		<form id="otpForm">
 			<label for="otp">Enter OTP</label>
 			<input type="text" id="otp" name="otp" minlength="6" maxlength="6" required><br>
-			<button onclick="verifyOTP()">Verify</button>
+			<button type="submit">Verify</button>
 		</form>
 	</div>
 	<script>
+		function showToast(message, type='success') {
+			const toast = document.createElement('div');
+			toast.className = `toast ${type}`;
+			toast.textContent = message;
+			document.body.appendChild(toast);
+			setTimeout(() => toast.classList.add('show'), 100);
+			setTimeout(() => {
+				toast.classList.remove('show');
+				setTimeout(() => toast.remove(), 300);
+			}, 3000);
+		}
+
+		document.getElementById('otpForm').addEventListener('submit', async (e) => {
+			e.preventDefault();
+			await verifyOTP();
+		})
 		async function verifyOTP() {
 			const otp = document.getElementById("otp").value;
 			const email = localStorage.getItem("login_email");
 			const role = localStorage.getItem("login_role");
-			const res = await fetch("https://gameocoder.onrender.com/api/auth/verify-otp", {
-				method: "POST",
-				headers: { "Content-Type": "application/json"},
-				body: JSON.stringify({email,otp})
-			});
-			const data = await res.json();
-			if(data.success) {
-				if(role === "student") {
-					localStorage.setItem("studentEmail", email);
-					window.location.href="../student/dashboard.html";
-				} else if (role === "admin") {
-					window.location.href="../admin/dashboard.html";
+			if(!email || !role) {
+				showToast('Session Expired. Please Login again.', 'error');
+				return;
+			}
+			try {
+				const res = await fetch("https://gameocoder.onrender.com/api/auth/verify-otp", {
+					method: "POST",
+					headers: { "Content-Type": "application/json"},
+					body: JSON.stringify({email,otp})
+				});
+				const data = await res.json();
+				if(data.success) {
+					if(role === "student") {
+						localStorage.setItem("studentEmail", email);
+						window.location.href="../student/dashboard.html";
+					} else if (role === "admin") {
+						window.location.href="../admin/dashboard.html";
+					}
+				} else {
+					alert(data.error || "OTP verification failed");
 				}
-			} else {
-				alert(data.error || "OTP verification failed");
+			} catch (error) {
+				showToast('Error connecting to server', 'error');
 			}
 		}
 	</script>
